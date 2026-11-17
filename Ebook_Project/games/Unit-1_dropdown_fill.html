@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete the sentences</title>
+    <style>
+        :root {
+            --primary: #1a6bb8;
+            --primary-hover: #145491;
+            --bg-outer: #f0f4f8;
+            --border-color: #cbd5e1;
+            --text-dark: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 15px;
+            background: var(--bg-outer);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-box {
+            background: #fff;
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 840px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 16px 24px 8px;
+            font-size: 19px;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .score-badge {
+            font-size: 14px;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* Рамка со словами сверху (Word Box) */
+        .word-box {
+            margin: 8px 24px 18px;
+            padding: 10px 18px;
+            background: #f8fafc;
+            border: 2px solid #94a3b8;
+            border-radius: 8px;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .box-word {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-dark);
+            padding: 2px 6px;
+        }
+
+        .box-word.used {
+            color: #94a3b8;
+            text-decoration: line-through;
+        }
+
+        /* Сетка предложений (в 2 колонки на ПК, в 1 на телефоне) */
+        .sentences-grid {
+            padding: 0 24px 22px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px 24px;
+        }
+
+        @media (max-width: 680px) {
+            .sentences-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sentence-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 17px;
+            line-height: 1.5;
+            color: var(--text-dark);
+            padding: 6px 8px;
+            border-radius: 8px;
+            background: #fcfcfd;
+            border: 1px solid #f1f5f9;
+        }
+
+        .num-label {
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 20px;
+        }
+
+        .speak-mini {
+            border: none;
+            background: #e0f2fe;
+            color: var(--primary);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            transition: 0.15s;
+        }
+
+        .speak-mini:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .speak-mini:disabled {
+            opacity: 0.3;
+            cursor: default;
+            background: #e2e8f0;
+            color: #94a3b8;
+        }
+
+
+        /* Выпадающий список */
+        select.gap-select {
+            padding: 4px 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid #94a3b8;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        select.gap-select:focus {
+            border-color: var(--primary);
+        }
+
+        select.gap-select.correct {
+            border-color: #22c55e;
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        select.gap-select.wrong {
+            border-color: #ef4444;
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-mark {
+            font-weight: 800;
+            font-size: 18px;
+            margin-left: 2px;
+        }
+
+        .status-mark.ok {
+            color: #16a34a;
+        }
+
+        .status-mark.err {
+            color: #dc2626;
+        }
+
+        /* Нижняя панель */
+        .footer {
+            background: #e2e8f0;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 1px solid var(--primary);
+            background: #fff;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .btn:hover {
+            background: #e0f2fe;
+        }
+
+        .btn.primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn.primary:hover {
+            background: var(--primary-hover);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-box">
+        <div class="header">
+            <span>Complete the sentences with the words in the box.</span>
+            <span class="score-badge" id="scoreBadge">Score: 0 / 8</span>
+        </div>
+
+        <div class="word-box" id="wordBox"></div>
+
+        <div class="sentences-grid" id="sentencesGrid"></div>
+
+        <div class="footer">
+            <span style="font-size: 13px; color: #475569;">Choose the correct word from each list, then click Check
+                answers.</span>
+            <div style="display:flex; gap:8px;">
+                <button class="btn primary" onclick="checkAnswers()">Check answers</button>
+                <button class="btn" onclick="showAnswers()">Show answers</button>
+                <button class="btn" onclick="initGame()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === СПИСОК ПРЕДЛОЖЕНИЙ (Меняй текст и правильные слова здесь!) ===
+        // Программа сама соберёт все правильные слова (answer) в общую рамку сверху!
+        const SENTENCES = [
+            { before: "Get into", answer: "groups", after: "of three." },
+            { before: "Can you", answer: "help", after: "me?" },
+            { before: "", answer: "How", after: "do you say 'pencil' in English?" },
+            { before: "What does 'notebook'", answer: "mean", after: "?" },
+            { before: "Raise your", answer: "hands", after: "." },
+            { before: "Let's", answer: "work", after: "together." },
+            { before: "Work", answer: "with", after: "a new group." },
+            { before: "", answer: "Listen", after: "to each other." }
+        ];
+
+        let wordOptions = [];
+
+        function speak(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            var utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'en-GB';
+            utter.rate = 0.92;
+            window.speechSynthesis.speak(utter);
+        }
+
+        function playTone(type) {
+            try {
+                var ctx = new (window.AudioContext || window.webkitAudioContext)();
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                if (type === 'win') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.12);
+                    gain.gain.setValueAtTime(0.14, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+                    osc.start(); osc.stop(ctx.currentTime + 0.4);
+                } else {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(200, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+                    osc.start(); osc.stop(ctx.currentTime + 0.2);
+                }
+            } catch (e) { }
+        }
+
+        function initGame() {
+            document.getElementById('scoreBadge').textContent = 'Score: 0 / ' + SENTENCES.length;
+
+            // Собираем и сортируем слова для верхней рамки и выпадающих списков
+            wordOptions = SENTENCES.map(function (s) { return s.answer; });
+            wordOptions.sort(function (a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()); });
+
+            renderWordBox();
+
+            var grid = document.getElementById('sentencesGrid');
+            grid.innerHTML = '';
+
+            SENTENCES.forEach(function (item, idx) {
+                var row = document.createElement('div');
+                row.className = 'sentence-item';
+
+                var num = document.createElement('span');
+                num.className = 'num-label';
+                num.textContent = (idx + 1) + '.';
+
+                /*  var speakBtn = document.createElement('button');
+                  speakBtn.className = 'speak-mini';
+                  speakBtn.title = 'Listen';
+                  speakBtn.textContent = '🔊';
+                  speakBtn.onclick = function () {
+                      var sel = document.getElementById('sel-' + idx);
+                      var chosen = sel.value ? sel.value : item.answer;
+                      speak(item.before + ' ' + chosen + ' ' + item.after);
+                  }; */
+
+                var speakBtn = document.createElement('button');
+                speakBtn.className = 'speak-mini';
+                speakBtn.id = 'spk-' + idx;
+                speakBtn.title = 'Listen';
+                speakBtn.textContent = '🔊';
+                speakBtn.disabled = true;
+                speakBtn.onclick = function () {
+                    speak(item.before + ' ' + item.answer + ' ' + item.after);
+                };
+
+
+                var textWrap = document.createElement('div');
+                if (item.before) {
+                    textWrap.appendChild(document.createTextNode(item.before + ' '));
+                }
+
+                var select = document.createElement('select');
+                select.className = 'gap-select';
+                select.id = 'sel-' + idx;
+                select.onchange = function () {
+                    select.classList.remove('correct', 'wrong');
+                    document.getElementById('mark-' + idx).textContent = '';
+                    renderWordBox();
+                };
+
+                var defaultOpt = document.createElement('option');
+                defaultOpt.value = '';
+                defaultOpt.textContent = '---';
+                select.appendChild(defaultOpt);
+
+                wordOptions.forEach(function (w) {
+                    var opt = document.createElement('option');
+                    opt.value = w;
+                    opt.textContent = w;
+                    select.appendChild(opt);
+                });
+
+                textWrap.appendChild(select);
+
+                var mark = document.createElement('span');
+                mark.className = 'status-mark';
+                mark.id = 'mark-' + idx;
+                textWrap.appendChild(mark);
+
+                if (item.after) {
+                    textWrap.appendChild(document.createTextNode(' ' + item.after));
+                }
+
+                row.appendChild(num);
+                row.appendChild(speakBtn);
+                row.appendChild(textWrap);
+                grid.appendChild(row);
+            });
+        }
+
+        function renderWordBox() {
+            var usedWords = [];
+            SENTENCES.forEach(function (_, idx) {
+                var sel = document.getElementById('sel-' + idx);
+                if (sel && sel.value) usedWords.push(sel.value);
+            });
+
+            var box = document.getElementById('wordBox');
+            box.innerHTML = '';
+            wordOptions.forEach(function (w) {
+                var span = document.createElement('span');
+                span.className = 'box-word' + (usedWords.indexOf(w) !== -1 ? ' used' : '');
+                span.textContent = w;
+                box.appendChild(span);
+            });
+        }
+
+        function checkAnswers() {
+            var correctCount = 0;
+            SENTENCES.forEach(function (item, idx) {
+                document.getElementById('spk-' + idx).disabled = false;
+                var sel = document.getElementById('sel-' + idx);
+                var mark = document.getElementById('mark-' + idx);
+                sel.classList.remove('correct', 'wrong');
+                if (sel.value === item.answer) {
+                    sel.classList.add('correct');
+                    mark.className = 'status-mark ok';
+                    mark.textContent = ' ✓';
+                    correctCount++;
+                } else {
+                    sel.classList.add('wrong');
+                    mark.className = 'status-mark err';
+                    mark.textContent = ' ✗';
+                }
+            });
+            document.getElementById('scoreBadge').textContent = 'Score: ' + correctCount + ' / ' + SENTENCES.length;
+            if (correctCount === SENTENCES.length) {
+                playTone('win');
+            } else {
+                playTone('err');
+            }
+        }
+
+        function showAnswers() {
+            SENTENCES.forEach(function (item, idx) {
+                document.getElementById('spk-' + idx).disabled = false;
+                var sel = document.getElementById('sel-' + idx);
+                var mark = document.getElementById('mark-' + idx);
+                sel.value = item.answer;
+                sel.classList.remove('wrong');
+                sel.classList.add('correct');
+                mark.className = 'status-mark ok';
+                mark.textContent = ' ✓';
+            });
+            renderWordBox();
+            document.getElementById('scoreBadge').textContent = 'Score: ' + SENTENCES.length + ' / ' + SENTENCES.length;
+            playTone('win');
+        }
+        initGame();
+    </script>
+</body>
+
+</html>
